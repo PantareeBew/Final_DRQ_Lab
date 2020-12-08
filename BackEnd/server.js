@@ -4,6 +4,7 @@ const port = 4000
 const cors = require('cors');
 const bodyParser = require("body-parser");
 const mongoose = require('mongoose');
+const path = require('path');
 
 app.use(cors());
 app.use(function(req, res, next) {
@@ -14,8 +15,13 @@ res.header("Access-Control-Allow-Headers",
 next();
 });
 
+app.use(express.static(path.join(__dirname, '../build')));
+app.use('/static', express.static(path.join(__dirname, 'build//static')));
+
+//parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({extended: false}))
 
+//parse application/json
 app.use(bodyParser.json())
 
 const myConnectionString = 'mongodb+srv://admin:776636@cluster0.u96dy.mongodb.net/movie?retryWrites=true&w=majority';
@@ -114,6 +120,10 @@ app.post('/api/movies', (req,res) =>{
     })
 
     res.send('Item Added');
+})
+
+app.get('*',(req,res)=>{
+    res.sendFile(path.join(__dirname+'/../build/index.html'));
 })
 
 app.listen(port, () => {
